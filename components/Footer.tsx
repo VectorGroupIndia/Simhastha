@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const FacebookIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -29,15 +30,17 @@ const InstagramIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 const Footer: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-brand-dark text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col items-center text-center space-y-6">
           
           <div>
-            <p className="text-sm text-slate-300">foundtastic by Transfigure Technologies Pvt Ltd.</p>
-            <p className="text-lg font-semibold text-brand-secondary mt-1">Ujjain Simhastha Mahakumbh 2028</p>
-            <p className="text-xs text-slate-400 mt-2">Copyright © {new Date().getFullYear()}</p>
+            <p className="text-sm text-slate-300">{t.footerMotto}</p>
+            <p className="text-lg font-semibold text-brand-secondary mt-1">{t.footerEvent}</p>
+            <p className="text-xs text-slate-400 mt-2">{t.footerCopyright}</p>
           </div>
           
           <div className="flex items-center space-x-6">

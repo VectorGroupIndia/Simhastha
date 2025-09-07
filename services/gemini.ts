@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { ItemCategory } from "../types";
 import { CATEGORIES } from "../constants";
@@ -99,3 +100,76 @@ const analyzeItemImageLive = async (
 export const analyzeItemImage = process.env.API_KEY 
   ? analyzeItemImageLive 
   : analyzeItemImageMock;
+
+
+// --- Translation Logic ---
+
+const translateToEnglishMock = async (text: string, _sourceLanguage: string): Promise<string> => {
+    if (!text) return "";
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(`${text} (translated to English)`);
+        }, 500);
+    });
+};
+
+const translateToEnglishLive = async (text: string, sourceLanguage: string): Promise<string> => {
+    if (!text || sourceLanguage === 'English') {
+        return text;
+    }
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: `Translate the following text from ${sourceLanguage} to English. Provide only the translated text, without any introductory phrases or explanations. Text to translate: "${text}"`,
+            config: {
+                temperature: 0.2,
+            }
+        });
+
+        return response.text.trim();
+
+    } catch (error) {
+        console.error(`Error translating from ${sourceLanguage}:`, error);
+        throw new Error(`Failed to translate text from ${sourceLanguage}. Please try again.`);
+    }
+};
+
+export const translateToEnglish = process.env.API_KEY
+    ? translateToEnglishLive
+    : translateToEnglishMock;
+
+
+const translateFromEnglishMock = async (text: string, targetLanguage: string): Promise<string> => {
+    if (!text) return "";
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(`${text} (translated to ${targetLanguage})`);
+        }, 500);
+    });
+};
+
+const translateFromEnglishLive = async (text: string, targetLanguage: string): Promise<string> => {
+    if (!text || targetLanguage === 'English') {
+        return text;
+    }
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: `Translate the following English text to ${targetLanguage}. Provide only the translated text, without any introductory phrases, explanations, or quotes. Text to translate: "${text}"`,
+            config: {
+                temperature: 0.7, // A bit more creative for natural language
+            }
+        });
+
+        return response.text.trim();
+
+    } catch (error) {
+        console.error(`Error translating to ${targetLanguage}:`, error);
+        throw new Error(`Failed to translate text to ${targetLanguage}. Please try again.`);
+    }
+};
+
+
+export const translateFromEnglish = process.env.API_KEY
+    ? translateFromEnglishLive
+    : translateFromEnglishMock;

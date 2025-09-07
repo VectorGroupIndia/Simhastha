@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ReportDetailsModal from '../components/ReportDetailsModal';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const UserIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -98,6 +99,7 @@ export const statusStyles: Record<ReportStatus, string> = {
 };
 
 const ProfilePage: React.FC = () => {
+    const { t, translateStatus } = useLanguage();
     const [activeTab, setActiveTab] = useState<'lost' | 'found'>('lost');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -118,16 +120,16 @@ const ProfilePage: React.FC = () => {
                 <div key={report.id} className="flex flex-wrap items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-lg shadow-sm transition-shadow hover:shadow-md">
                     <div>
                         <p className="font-semibold text-brand-dark">{report.item}</p>
-                        <p className="text-sm text-slate-500">Reported on: {report.date}</p>
+                        <p className="text-sm text-slate-500">{t.profileReportedOn} {report.date}</p>
                     </div>
                     <div className="flex items-center space-x-4 mt-2 sm:mt-0">
                          <span className={`px-3 py-1 text-xs font-medium rounded-full ${statusStyles[report.status]}`}>
-                            {report.status}
+                            {translateStatus(report.status)}
                         </span>
-                        <button onClick={() => handleViewDetails(report)} className="text-sm font-semibold text-brand-primary hover:underline">View Details</button>
+                        <button onClick={() => handleViewDetails(report)} className="text-sm font-semibold text-brand-primary hover:underline">{t.profileViewDetails}</button>
                     </div>
                 </div>
-            )) : <p className="text-center text-slate-500 py-8">No reports found in this category.</p>}
+            )) : <p className="text-center text-slate-500 py-8">{t.profileNoReports}</p>}
         </div>
     );
 
@@ -136,9 +138,9 @@ const ProfilePage: React.FC = () => {
             <div className="bg-brand-light">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
                     <div className="flex flex-wrap justify-between items-center mb-12 gap-4">
-                        <h1 className="text-4xl font-bold tracking-tight text-brand-dark sm:text-5xl">My Profile</h1>
+                        <h1 className="text-4xl font-bold tracking-tight text-brand-dark sm:text-5xl">{t.profileTitle}</h1>
                         <Link to="/report" className="px-6 py-3 rounded-md text-sm font-semibold text-white bg-brand-secondary hover:opacity-90 transition-opacity shadow-md">
-                            File a New Report
+                            {t.profileNewReport}
                         </Link>
                     </div>
 
@@ -163,7 +165,7 @@ const ProfilePage: React.FC = () => {
                                     </div>
                                 </div>
                                 <button className="mt-8 w-full bg-transparent border border-brand-primary text-brand-primary font-semibold py-2 px-4 rounded-md hover:bg-brand-primary hover:text-white transition-colors">
-                                    Edit Profile
+                                    {t.profileEdit}
                                 </button>
                             </div>
                         </div>
@@ -177,13 +179,13 @@ const ProfilePage: React.FC = () => {
                                             onClick={() => setActiveTab('lost')}
                                             className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'lost' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}`}
                                         >
-                                            My Lost Reports
+                                            {t.profileLostReports}
                                         </button>
                                         <button
                                             onClick={() => setActiveTab('found')}
                                             className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'found' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}`}
                                         >
-                                            My Found Reports
+                                            {t.profileFoundReports}
                                         </button>
                                     </nav>
                                 </div>

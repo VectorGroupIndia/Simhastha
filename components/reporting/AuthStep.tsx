@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface AuthStepProps {
     onAuthSuccess: () => void;
@@ -7,6 +8,7 @@ interface AuthStepProps {
 type InternalStep = 'email' | 'emailOtp' | 'mobile' | 'mobileOtp' | 'setPassword';
 
 const AuthStep: React.FC<AuthStepProps> = ({ onAuthSuccess }) => {
+    const { t } = useLanguage();
     const [step, setStep] = useState<InternalStep>('email');
     const [email, setEmail] = useState('');
     const [mobile, setMobile] = useState('');
@@ -21,15 +23,14 @@ const AuthStep: React.FC<AuthStepProps> = ({ onAuthSuccess }) => {
         e.preventDefault();
         setErrors({});
         if (!email.trim()) {
-            setErrors({ email: 'Email address is required.' });
+            setErrors({ email: t.errors.emailRequired });
             return;
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            setErrors({ email: 'Please enter a valid email address.' });
+            setErrors({ email: t.errors.emailInvalid });
             return;
         }
 
         console.log('Checking user registration for:', email);
-        // Simulate checking if user is registered
         if (email.toLowerCase() === 'user@demo.com') {
             setIsRegistered(true);
         } else {
@@ -46,7 +47,7 @@ const AuthStep: React.FC<AuthStepProps> = ({ onAuthSuccess }) => {
             console.log('Email OTP verified.');
             setStep('mobile');
         } else {
-            setErrors({ otp: 'Invalid Email OTP. Use demo OTP: 123456' });
+            setErrors({ otp: t.errors.emailOtp });
         }
     };
 
@@ -54,10 +55,10 @@ const AuthStep: React.FC<AuthStepProps> = ({ onAuthSuccess }) => {
         e.preventDefault();
         setErrors({});
         if (!mobile.trim()) {
-            setErrors({ mobile: 'Mobile number is required.' });
+            setErrors({ mobile: t.errors.mobileRequired });
             return;
         } else if (!/^[6-9]\d{9}$/.test(mobile)) {
-            setErrors({ mobile: 'Please enter a valid 10-digit mobile number.' });
+            setErrors({ mobile: t.errors.mobileInvalid });
             return;
         }
         console.log('Simulating sending OTP to mobile...');
@@ -77,7 +78,7 @@ const AuthStep: React.FC<AuthStepProps> = ({ onAuthSuccess }) => {
                 setStep('setPassword');
             }
         } else {
-            setErrors({ otp: 'Invalid Mobile OTP. Use demo OTP: 654321' });
+            setErrors({ otp: t.errors.mobileOtp });
         }
     };
 
@@ -85,10 +86,10 @@ const AuthStep: React.FC<AuthStepProps> = ({ onAuthSuccess }) => {
         e.preventDefault();
         const newErrors: Record<string, string> = {};
         if (password.length < 8) {
-            newErrors.password = 'Password must be at least 8 characters long.';
+            newErrors.password = t.errors.passwordLength;
         }
         if (password !== confirmPassword) {
-            newErrors.confirmPassword = 'Passwords do not match.';
+            newErrors.confirmPassword = t.errors.passwordMismatch;
         }
         
         if (Object.keys(newErrors).length > 0) {
@@ -106,20 +107,20 @@ const AuthStep: React.FC<AuthStepProps> = ({ onAuthSuccess }) => {
     const renderPasswordForm = () => (
         <form onSubmit={handlePasswordSubmit} className="space-y-4" noValidate>
             <div className="text-center p-4 bg-green-50 border border-green-200 rounded-lg">
-                <p className="font-semibold text-green-800">Mobile Verified!</p>
-                <p className="text-sm text-green-700">Please set a password to create your new account.</p>
+                <p className="font-semibold text-green-800">{t.authMobileVerified}</p>
+                <p className="text-sm text-green-700">{t.authSetPasswordPrompt}</p>
             </div>
             <div>
-                <label htmlFor="password" a-label="block text-sm font-medium text-slate-700">Password</label>
-                <input type="password" name="password" id="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Minimum 8 characters" className={getInputClassName('password')} />
+                <label htmlFor="password" a-label="block text-sm font-medium text-slate-700">{t.passwordLabel}</label>
+                <input type="password" name="password" id="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder={t.passwordHint} className={getInputClassName('password')} />
                  {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
             </div>
             <div>
-                <label htmlFor="confirmPassword" a-label="block text-sm font-medium text-slate-700">Confirm Password</label>
+                <label htmlFor="confirmPassword" a-label="block text-sm font-medium text-slate-700">{t.passwordConfirmLabel}</label>
                 <input type="password" name="confirmPassword" id="confirmPassword" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required className={getInputClassName('confirmPassword')} />
                  {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
             </div>
-            <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">Create Account & Proceed</button>
+            <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">{t.authCreateAccount}</button>
         </form>
     );
     
@@ -128,53 +129,53 @@ const AuthStep: React.FC<AuthStepProps> = ({ onAuthSuccess }) => {
             case 'email':
                 return (
                     <form onSubmit={handleEmailSubmit} className="space-y-4" noValidate>
-                        <p className="text-center text-slate-600">Please enter your email to begin. We'll check if you have an account.</p>
+                        <p className="text-center text-slate-600">{t.authPrompt}</p>
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email Address</label>
+                            <label htmlFor="email" className="block text-sm font-medium text-slate-700">{t.emailLabel}</label>
                             <input type="email" name="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required className={getInputClassName('email')} />
                              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                         </div>
-                        <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">Continue</button>
+                        <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">{t.authContinue}</button>
                     </form>
                 );
             case 'emailOtp':
                 return (
                      <form onSubmit={handleEmailOtpSubmit} className="space-y-4 text-center">
-                        <p className="text-sm text-slate-600">An OTP has been sent to <strong>{email}</strong>. <br/> (For demo purposes, use OTP: <strong>123456</strong>)</p>
+                        <p className="text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: t.emailOtpPrompt.replace('{otp}', '<strong>123456</strong>') }} />
                         <div>
-                            <label htmlFor="email-otp" className="sr-only">Email OTP</label>
-                            <input type="text" name="email-otp" id="email-otp" value={emailOtp} onChange={e => setEmailOtp(e.target.value)} required placeholder="Enter 6-digit OTP" className={getInputClassName('otp') + ' text-center'} />
+                            <label htmlFor="email-otp" className="sr-only">{t.emailLabel} OTP</label>
+                            <input type="text" name="email-otp" id="email-otp" value={emailOtp} onChange={e => setEmailOtp(e.target.value)} required placeholder={t.otpPlaceholder} className={getInputClassName('otp') + ' text-center'} />
                         </div>
                         {errors.otp && <p className="text-sm text-red-600">{errors.otp}</p>}
-                        <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">Verify Email</button>
+                        <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">{t.authVerifyEmail}</button>
                     </form>
                 );
             case 'mobile':
                  return (
                     <form onSubmit={handleMobileSubmit} className="space-y-4" noValidate>
                         <div className="text-center p-4 bg-green-50 border border-green-200 rounded-lg">
-                           <p className="font-semibold text-green-800">Email Verified!</p>
-                           {isRegistered ? <p className="text-sm text-green-700">Welcome back! We found an existing account for you.</p> : <p className="text-sm text-green-700">We will create a new account for you.</p>}
+                           <p className="font-semibold text-green-800">{t.authEmailVerified}</p>
+                           {isRegistered ? <p className="text-sm text-green-700">{t.authWelcomeBack}</p> : <p className="text-sm text-green-700">{t.authNewAccount}</p>}
                         </div>
-                        <p className="text-center text-slate-600">Please enter your mobile number for verification.</p>
+                        <p className="text-center text-slate-600">{t.authMobilePrompt}</p>
                         <div>
-                            <label htmlFor="mobile" className="block text-sm font-medium text-slate-700">Mobile Number</label>
+                            <label htmlFor="mobile" className="block text-sm font-medium text-slate-700">{t.mobileLabel}</label>
                             <input type="tel" name="mobile" id="mobile" value={mobile} onChange={e => setMobile(e.target.value)} required className={getInputClassName('mobile')} />
                              {errors.mobile && <p className="mt-1 text-sm text-red-600">{errors.mobile}</p>}
                         </div>
-                        <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">Send OTP</button>
+                        <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">{t.authSendOtp}</button>
                     </form>
                 );
             case 'mobileOtp':
                  return (
                      <form onSubmit={handleMobileOtpSubmit} className="space-y-4 text-center">
-                        <p className="text-sm text-slate-600">An OTP has been sent to <strong>{mobile}</strong>. <br/> (For demo purposes, use OTP: <strong>654321</strong>)</p>
+                        <p className="text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: t.mobileOtpPrompt.replace('{otp}', '<strong>654321</strong>') }} />
                         <div>
-                            <label htmlFor="mobile-otp" className="sr-only">Mobile OTP</label>
-                            <input type="text" name="mobile-otp" id="mobile-otp" value={mobileOtp} onChange={e => setMobileOtp(e.target.value)} required placeholder="Enter 6-digit OTP" className={getInputClassName('otp') + ' text-center'} />
+                            <label htmlFor="mobile-otp" className="sr-only">{t.mobileLabel} OTP</label>
+                            <input type="text" name="mobile-otp" id="mobile-otp" value={mobileOtp} onChange={e => setMobileOtp(e.target.value)} required placeholder={t.otpPlaceholder} className={getInputClassName('otp') + ' text-center'} />
                         </div>
                         {errors.otp && <p className="text-sm text-red-600">{errors.otp}</p>}
-                        <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">Verify Mobile & Proceed</button>
+                        <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">{t.authVerifyMobile}</button>
                     </form>
                 );
             case 'setPassword':

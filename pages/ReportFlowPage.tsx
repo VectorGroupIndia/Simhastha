@@ -4,6 +4,7 @@ import InstructionsStep from '../components/reporting/InstructionsStep';
 import ReportFormStep from '../components/reporting/ReportFormStep';
 import ConfirmationStep from '../components/reporting/ConfirmationStep';
 import SuccessStep from '../components/reporting/SuccessStep';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export interface ReportData {
   reportType: 'lost' | 'found';
@@ -26,6 +27,7 @@ interface ReportFlowPageProps {
 }
 
 const ReportFlowPage: React.FC<ReportFlowPageProps> = ({ isLoggedIn }) => {
+    const { t } = useLanguage();
     const [step, setStep] = useState<ReportStep>(isLoggedIn ? 'instructions' : 'auth');
     const [formData, setFormData] = useState<Partial<ReportData>>({});
 
@@ -70,11 +72,11 @@ const ReportFlowPage: React.FC<ReportFlowPageProps> = ({ isLoggedIn }) => {
     };
     
     const titles: Record<ReportStep, string> = {
-        auth: 'User Verification',
-        instructions: 'Before You Report',
-        form: 'File a New Report',
-        confirm: 'Confirm Your Details',
-        success: 'Report Submitted Successfully',
+        auth: t.authTitle,
+        instructions: t.instructionsTitle,
+        form: t.formTitle,
+        confirm: t.confirmTitle,
+        success: t.successTitle,
     };
 
     return (

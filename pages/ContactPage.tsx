@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const ContactPage: React.FC = () => {
+    const { t } = useLanguage();
     const [formStep, setFormStep] = useState<'details' | 'otp' | 'success'>('details');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -11,18 +13,18 @@ const ContactPage: React.FC = () => {
 
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
-        if (!name.trim()) newErrors.name = 'Full name is required.';
+        if (!name.trim()) newErrors.name = t.contactErrors.name;
         if (!email.trim()) {
-            newErrors.email = 'Email address is required.';
+            newErrors.email = t.contactErrors.email;
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            newErrors.email = 'Please enter a valid email address.';
+            newErrors.email = t.contactErrors.emailInvalid;
         }
         if (!mobile.trim()) {
-            newErrors.mobile = 'Mobile number is required.';
+            newErrors.mobile = t.contactErrors.mobile;
         } else if (!/^[6-9]\d{9}$/.test(mobile)) {
-            newErrors.mobile = 'Please enter a valid 10-digit mobile number.';
+            newErrors.mobile = t.contactErrors.mobileInvalid;
         }
-        if (!message.trim()) newErrors.message = 'Message is required.';
+        if (!message.trim()) newErrors.message = t.contactErrors.message;
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -43,7 +45,7 @@ const ContactPage: React.FC = () => {
             console.log('OTP verification successful!');
             setFormStep('success');
         } else {
-            setErrors({ otp: 'Invalid OTP. Please use the demo OTP: 123456' });
+            setErrors({ otp: t.contactErrors.otp });
         }
     };
     
@@ -52,27 +54,27 @@ const ContactPage: React.FC = () => {
     const renderDetailsForm = () => (
         <form onSubmit={handleDetailsSubmit} className="space-y-4">
             <div>
-                <label htmlFor="name" className="block text-sm font-medium text-slate-700">Full Name</label>
+                <label htmlFor="name" className="block text-sm font-medium text-slate-700">{t.contactFormName}</label>
                 <input type="text" name="name" id="name" value={name} onChange={e => setName(e.target.value)} className={getInputClassName('name')} />
                 {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
             </div>
             <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email Address</label>
+                <label htmlFor="email" className="block text-sm font-medium text-slate-700">{t.contactFormEmail}</label>
                 <input type="email" name="email" id="email" value={email} onChange={e => setEmail(e.target.value)} className={getInputClassName('email')} />
                 {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
             </div>
             <div>
-                <label htmlFor="mobile" className="block text-sm font-medium text-slate-700">Mobile Number</label>
+                <label htmlFor="mobile" className="block text-sm font-medium text-slate-700">{t.contactFormMobile}</label>
                 <input type="tel" name="mobile" id="mobile" value={mobile} onChange={e => setMobile(e.target.value)} className={getInputClassName('mobile')} />
                 {errors.mobile && <p className="mt-1 text-sm text-red-600">{errors.mobile}</p>}
             </div>
             <div>
-                <label htmlFor="message" className="block text-sm font-medium text-slate-700">Message</label>
+                <label htmlFor="message" className="block text-sm font-medium text-slate-700">{t.contactFormMessage}</label>
                 <textarea id="message" name="message" rows={4} value={message} onChange={e => setMessage(e.target.value)} className={getInputClassName('message')}></textarea>
                 {errors.message && <p className="mt-1 text-sm text-red-600">{errors.message}</p>}
             </div>
             <div>
-                <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">Send Message</button>
+                <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">{t.contactFormSend}</button>
             </div>
         </form>
     );
@@ -80,17 +82,17 @@ const ContactPage: React.FC = () => {
     const renderOtpForm = () => (
         <form onSubmit={handleOtpSubmit} className="space-y-4 text-center">
             <p className="text-sm text-slate-600">
-                An OTP has been sent to your email and mobile.
+                {t.contactFormOtpPrompt}
                 <br />
-                (For demo purposes, use OTP: <strong>123456</strong>)
+                {t.contactFormOtpDemo}
             </p>
             <div>
-                <label htmlFor="otp" className="block text-sm font-medium text-slate-700 sr-only">Enter OTP</label>
-                <input type="text" name="otp" id="otp" value={otp} onChange={e => setOtp(e.target.value)} placeholder="Enter 6-digit OTP" className={getInputClassName('otp') + ' text-center'} />
+                <label htmlFor="otp" className="block text-sm font-medium text-slate-700 sr-only">{t.contactFormOtpPlaceholder}</label>
+                <input type="text" name="otp" id="otp" value={otp} onChange={e => setOtp(e.target.value)} placeholder={t.contactFormOtpPlaceholder} className={getInputClassName('otp') + ' text-center'} />
                 {errors.otp && <p className="mt-1 text-sm text-red-600">{errors.otp}</p>}
             </div>
             <div>
-                <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">Verify & Submit</button>
+                <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">{t.contactFormOtpVerify}</button>
             </div>
         </form>
     );
@@ -100,8 +102,8 @@ const ContactPage: React.FC = () => {
              <svg className="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <h3 className="text-xl font-bold text-green-800">Message Sent Successfully!</h3>
-            <p className="text-green-700">Thank you for contacting us. We will get back to you shortly.</p>
+            <h3 className="text-xl font-bold text-green-800">{t.contactFormSuccessTitle}</h3>
+            <p className="text-green-700">{t.contactFormSuccessBody}</p>
         </div>
     );
 
@@ -109,34 +111,34 @@ const ContactPage: React.FC = () => {
     <div className="bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold tracking-tight text-brand-dark sm:text-5xl">Get in Touch</h1>
-            <p className="mt-4 text-lg text-slate-600">We are here to help. Contact us through the appropriate channel below.</p>
+            <h1 className="text-4xl font-bold tracking-tight text-brand-dark sm:text-5xl">{t.contactTitle}</h1>
+            <p className="mt-4 text-lg text-slate-600">{t.contactSubtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {/* Left Column */}
             <div>
-                <h2 className="text-2xl font-bold text-brand-primary mb-4 border-b-2 border-brand-primary pb-2">Transfigure Technologies Pvt Ltd.</h2>
+                <h2 className="text-2xl font-bold text-brand-primary mb-4 border-b-2 border-brand-primary pb-2">{t.contactOrgTitle}</h2>
                 <div className="space-y-4 text-slate-700">
-                    <p><strong>Address:</strong> 2371, Kshitij Nivas, Datta Nagar, Vasud-Akola Road, Sangola, Solpaur, Maharashtra, 413307</p>
-                    <p><strong>Corporate Email:</strong> <a href="mailto:contact@thetransfigure.com" className="text-brand-secondary hover:underline">contact@thetransfigure.com</a></p>
-                    <p><strong>Phone:</strong> <a href="tel:+917276199099" className="text-brand-secondary hover:underline">+91 7276199099</a></p>
+                    <p><strong>{t.contactOrgAddress}</strong> 2371, Kshitij Nivas, Datta Nagar, Vasud-Akola Road, Sangola, Solpaur, Maharashtra, 413307</p>
+                    <p><strong>{t.contactOrgEmail}</strong> <a href="mailto:contact@thetransfigure.com" className="text-brand-secondary hover:underline">contact@thetransfigure.com</a></p>
+                    <p><strong>{t.contactOrgPhone}</strong> <a href="tel:+917276199099" className="text-brand-secondary hover:underline">+91 7276199099</a></p>
                 </div>
             </div>
 
             {/* Right Column */}
             <div>
-                 <h2 className="text-2xl font-bold text-brand-secondary mb-4 border-b-2 border-brand-secondary pb-2">Ujjain Simhastha Mahakumbh 2028</h2>
+                 <h2 className="text-2xl font-bold text-brand-secondary mb-4 border-b-2 border-brand-secondary pb-2">{t.contactEventTitle}</h2>
                  <div className="space-y-4 text-slate-700 mb-8">
-                    <p>For inquiries related to the Simhastha event:</p>
-                    <p><strong>Official Email:</strong> <a href="mailto:help@simhastha2028.gov.in" className="text-brand-primary hover:underline">help@simhastha2028.gov.in</a></p>
-                    <p><strong>General Enquiries:</strong> Helpline <a href="tel:18001232028" className="text-brand-primary hover:underline">1800-123-2028</a></p>
-                    <p><strong>For Emergency:</strong> Dial <a href="tel:112" className="text-brand-primary hover:underline font-bold">112</a></p>
-                     <p><strong>For Lost and Found:</strong> Contact nearest Help Desk or use the platform.</p>
+                    <p>{t.contactEventDesc}</p>
+                    <p><strong>{t.contactEventEmail}</strong> <a href="mailto:help@simhastha2028.gov.in" className="text-brand-primary hover:underline">help@simhastha2028.gov.in</a></p>
+                    <p><strong>{t.contactEventHelpline}</strong> Helpline <a href="tel:18001232028" className="text-brand-primary hover:underline">1800-123-2028</a></p>
+                    <p><strong>{t.contactEventEmergency}</strong> Dial <a href="tel:112" className="text-brand-primary hover:underline font-bold">112</a></p>
+                     <p><strong>{t.contactEventLostFound}</strong> {t.contactEventLostFoundDesc}</p>
                 </div>
 
                 <div className="bg-brand-light p-6 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold text-brand-dark mb-4 text-center">Contact Simhastha Authorities</h3>
+                    <h3 className="text-xl font-semibold text-brand-dark mb-4 text-center">{t.contactFormTitle}</h3>
                     {formStep === 'details' && renderDetailsForm()}
                     {formStep === 'otp' && renderOtpForm()}
                     {formStep === 'success' && renderSuccessMessage()}
@@ -147,17 +149,15 @@ const ContactPage: React.FC = () => {
         {/* Map Section */}
         <div className="mt-20">
              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold tracking-tight text-brand-dark sm:text-4xl">Find Help Centers</h2>
+                <h2 className="text-3xl font-bold tracking-tight text-brand-dark sm:text-4xl">{t.contactMapTitle}</h2>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="bg-brand-light p-6 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold text-brand-dark mb-4">Nearby Locations</h3>
+                    <h3 className="text-xl font-semibold text-brand-dark mb-4">{t.contactMapSubtitle}</h3>
                     <ul className="space-y-3 text-slate-700">
-                        <li className="p-3 bg-white rounded-md shadow-sm"><strong>Lost & Found Center 1:</strong> Ram Ghat</li>
-                        <li className="p-3 bg-white rounded-md shadow-sm"><strong>Police Station:</strong> Mahakal Thana</li>
-                        <li className="p-3 bg-white rounded-md shadow-sm"><strong>Help Desk A:</strong> Near Mahakaleshwar Temple</li>
-                        <li className="p-3 bg-white rounded-md shadow-sm"><strong>Lost & Found Center 2:</strong> Harsiddhi Temple Area</li>
-                        <li className="p-3 bg-white rounded-md shadow-sm"><strong>Help Desk B:</strong> Triveni Ghat</li>
+                        {t.contactMapLocations.map((loc, index) => (
+                            <li key={index} className="p-3 bg-white rounded-md shadow-sm"><strong>{loc.split(':')[0]}:</strong>{loc.split(':')[1]}</li>
+                        ))}
                     </ul>
                 </div>
                 <div className="lg:col-span-2 rounded-lg overflow-hidden shadow-2xl">

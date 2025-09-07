@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 
 type FormStep = 'credentials' | 'emailOtp' | 'mobileOtp' | 'success';
 
@@ -8,6 +9,7 @@ interface LoginPageProps {
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
+  const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const isRegister = location.pathname.includes('register');
@@ -38,29 +40,29 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     // Login validation
     if (!isRegister) {
       if (email !== 'user@demo.com' || password !== 'password123') {
-        setErrors({ form: 'Invalid demo credentials. Use user@demo.com and password123.' });
+        setErrors({ form: t.errors.login });
         return;
       }
     } else {
       // Registration validation
       const newErrors: Record<string, string> = {};
       if (!email.trim()) {
-        newErrors.email = 'Email address is required.';
+        newErrors.email = t.errors.emailRequired;
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        newErrors.email = 'Please enter a valid email address.';
+        newErrors.email = t.errors.emailInvalid;
       }
       if (!mobile.trim()) {
-        newErrors.mobile = 'Mobile number is required.';
+        newErrors.mobile = t.errors.mobileRequired;
       } else if (!/^[6-9]\d{9}$/.test(mobile)) {
-        newErrors.mobile = 'Please enter a valid 10-digit mobile number.';
+        newErrors.mobile = t.errors.mobileInvalid;
       }
       if (!password) {
-        newErrors.password = 'Password is required.';
+        newErrors.password = t.errors.passwordRequired;
       } else if (password.length < 8) {
-        newErrors.password = 'Password must be at least 8 characters long.';
+        newErrors.password = t.errors.passwordLength;
       }
       if (password !== confirmPassword) {
-        newErrors.confirmPassword = 'Passwords do not match.';
+        newErrors.confirmPassword = t.errors.passwordMismatch;
       }
       
       if (Object.keys(newErrors).length > 0) {
@@ -80,7 +82,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       console.log('Email OTP verification successful! Proceeding to mobile OTP verification...');
       setStep('mobileOtp');
     } else {
-      setErrors({ otp: 'Invalid Email OTP. Please use the demo OTP: 123456' });
+      setErrors({ otp: t.errors.emailOtp });
     }
   };
 
@@ -91,7 +93,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       console.log('Mobile OTP verification successful!');
       setStep('success');
     } else {
-      setErrors({ otp: 'Invalid Mobile OTP. Please use the demo OTP: 654321' });
+      setErrors({ otp: t.errors.mobileOtp });
     }
   };
   
@@ -101,7 +103,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     <form className="space-y-6" onSubmit={handleCredentialSubmit} noValidate>
       <div>
         <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-          Email address
+          {t.emailLabel}
         </label>
         <div className="mt-2">
           <input id="email" name="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={getInputClassName('email')}/>
@@ -112,7 +114,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       {isRegister && (
         <div>
           <label htmlFor="mobile" className="block text-sm font-medium leading-6 text-gray-900">
-            Mobile Number
+            {t.mobileLabel}
           </label>
           <div className="mt-2">
             <input id="mobile" name="mobile" type="tel" autoComplete="tel" required value={mobile} onChange={(e) => setMobile(e.target.value)} className={getInputClassName('mobile')}/>
@@ -124,19 +126,19 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       <div>
         <div className="flex items-center justify-between">
           <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-            Password
+            {t.passwordLabel}
           </label>
           {!isRegister && (
             <div className="text-sm">
               <a href="#" className="font-semibold text-brand-primary hover:text-brand-primary/80">
-                Forgot password?
+                {t.forgotPassword}
               </a>
             </div>
           )}
         </div>
         <div className="mt-2">
           <input id="password" name="password" type="password" autoComplete={isRegister ? "new-password" : "current-password"} required value={password} onChange={(e) => setPassword(e.target.value)} className={getInputClassName('password')}/>
-          {isRegister && <p className="mt-1 text-xs text-slate-500">Must be at least 8 characters long.</p>}
+          {isRegister && <p className="mt-1 text-xs text-slate-500">{t.passwordHint}</p>}
           {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
         </div>
       </div>
@@ -144,7 +146,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       {isRegister && (
         <div>
           <label htmlFor="confirmPassword" className="block text-sm font-medium leading-6 text-gray-900">
-            Confirm Password
+            {t.passwordConfirmLabel}
           </label>
           <div className="mt-2">
             <input id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password" required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className={getInputClassName('confirmPassword')}/>
@@ -160,7 +162,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           type="submit"
           className="flex w-full justify-center rounded-md bg-brand-primary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-brand-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
         >
-          {isRegister ? 'Register and Verify' : 'Sign in'}
+          {isRegister ? t.registerButton : t.loginButton}
         </button>
       </div>
     </form>
@@ -183,7 +185,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           {title}
         </label>
         <div className="mt-2">
-          <input id={id} name={id} type="text" required value={otpValue} onChange={(e) => setOtpValue(e.target.value)} className={getInputClassName('otp') + " text-center"} placeholder="Enter 6-digit OTP"/>
+          <input id={id} name={id} type="text" required value={otpValue} onChange={(e) => setOtpValue(e.target.value)} className={getInputClassName('otp') + " text-center"} placeholder={t.otpPlaceholder}/>
         </div>
       </div>
       
@@ -194,12 +196,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           type="submit"
           className="flex w-full justify-center rounded-md bg-brand-primary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-brand-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
         >
-          Verify
+          {t.verifyButton}
         </button>
       </div>
        <div className="text-center text-sm">
             <button type="button" onClick={() => { setStep('credentials'); setErrors({}); }} className="font-semibold text-brand-primary hover:text-brand-primary/80">
-                Go Back
+                {t.goBack}
             </button>
         </div>
     </form>
@@ -211,11 +213,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       <h2 className="text-2xl font-bold text-gray-900">
-        {isRegister ? 'Registration Successful!' : 'Login Successful!'}
+        {isRegister ? t.registerSuccessTitle : t.loginSuccessTitle}
       </h2>
-      <p className="text-gray-600">You will be redirected to your profile dashboard shortly.</p>
+      <p className="text-gray-600">{t.redirectMessage}</p>
        <Link to="/profile" className="inline-block mt-4 rounded-md bg-brand-secondary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90">
-            Go to Profile
+            {t.goToProfile}
         </Link>
     </div>
   );
@@ -223,11 +225,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const getTitle = () => {
     switch (step) {
       case 'credentials':
-        return isRegister ? 'Create a new account' : 'Sign in to your account';
+        return isRegister ? t.registerTitle : t.loginTitle;
       case 'emailOtp':
-        return 'Verify your Email';
+        return t.verifyEmailTitle;
       case 'mobileOtp':
-        return 'Verify your Mobile Number';
+        return t.verifyMobileTitle;
       default:
         return '';
     }
@@ -239,8 +241,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         return renderCredentialForm();
       case 'emailOtp':
         return renderOtpForm(
-          'Enter Email OTP',
-          <>An OTP has been sent to your email (for demo purposes, use <strong>123456</strong>).</>,
+          t.verifyEmailTitle,
+          <>{t.emailOtpPrompt.replace('{otp}', '<strong>123456</strong>')}</>,
           emailOtp,
           setEmailOtp,
           handleEmailOtpSubmit,
@@ -248,8 +250,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         );
       case 'mobileOtp':
         return renderOtpForm(
-          'Enter Mobile OTP',
-          <>An OTP has been sent to your mobile (for demo purposes, use <strong>654321</strong>).</>,
+          t.verifyMobileTitle,
+          <>{t.mobileOtpPrompt.replace('{otp}', '<strong>654321</strong>')}</>,
           mobileOtp,
           setMobileOtp,
           handleMobileOtpSubmit,
@@ -266,7 +268,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          {step === 'success' ? (isRegister ? 'Registration Successful!' : 'Login Successful!') : getTitle()}
+          {step === 'success' ? (isRegister ? t.registerSuccessTitle : t.loginSuccessTitle) : getTitle()}
         </h2>
       </div>
 
@@ -275,9 +277,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         
         {step !== 'success' && (
           <p className="mt-10 text-center text-sm text-gray-500">
-            {isRegister ? 'Already a member?' : 'Not a member?'}
+            {isRegister ? t.alreadyMember : t.notMember}
             <Link to={isRegister ? '/login' : '/register'} className="font-semibold leading-6 text-brand-primary hover:text-brand-primary/80 ml-1">
-              {isRegister ? 'Sign in' : 'Register now'}
+              {isRegister ? t.signInNow : t.registerNow}
             </Link>
           </p>
         )}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const NavItem: React.FC<{ to: string; children: React.ReactNode }> = ({ to, children }) => {
   return (
@@ -19,7 +20,17 @@ const NavItem: React.FC<{ to: string; children: React.ReactNode }> = ({ to, chil
 };
 
 const languages = [
-  "English", "हिंदी", "বাংলা", "ગુજરાતી", "ಕನ್ನಡ", "മലയാളം", "मराठी", "ਪੰਜਾਬੀ", "தமிழ்", "తెలుగు", "اردو"
+  { code: 'English', name: 'English' },
+  { code: 'हिंदी', name: 'हिंदी' },
+  { code: 'বাংলা', name: 'বাংলা' },
+  { code: 'ગુજરાતી', name: 'ગુજરાતી' },
+  { code: 'ಕನ್ನಡ', name: 'ಕನ್ನಡ' },
+  { code: 'മലയാളം', name: 'മലയാളം' },
+  { code: 'मराठी', name: 'मराठी' },
+  { code: 'ਪੰਜਾਬੀ', name: 'ਪੰਜਾਬੀ' },
+  { code: 'தமிழ்', name: 'தமிழ்' },
+  { code: 'తెలుగు', name: 'తెలుగు' },
+  { code: 'اردو', name: 'اردو' },
 ];
 
 interface HeaderProps {
@@ -30,10 +41,21 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { language, setLanguage, t } = useLanguage();
 
   const handleLogoutClick = () => {
     onLogout();
     navigate('/');
+  };
+
+  const handleLangChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedLanguage = e.target.value;
+    if (selectedLanguage === 'English' || selectedLanguage === 'हिंदी') {
+      setLanguage(selectedLanguage as 'English' | 'हिंदी');
+    } else {
+      // For now, only English and Hindi are fully supported in the context
+      alert(`${selectedLanguage} support is coming soon!`);
+    }
   };
 
   return (
@@ -42,31 +64,35 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 text-2xl font-bold text-brand-primary">
-              foundtastic
+              {t.appName}
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-4">
             <div className="flex items-baseline space-x-4">
-              <NavItem to="/">Home</NavItem>
-              <NavItem to="/about">About Us</NavItem>
-              <NavItem to="/contact">Contact Us</NavItem>
-              <NavItem to="/faq">FAQ</NavItem>
+              <NavItem to="/">{t.navHome}</NavItem>
+              <NavItem to="/about">{t.navAbout}</NavItem>
+              <NavItem to="/contact">{t.navContact}</NavItem>
+              <NavItem to="/faq">{t.navFAQ}</NavItem>
             </div>
             {isLoggedIn ? (
               <>
-                <NavItem to="/profile">Profile</NavItem>
+                <NavItem to="/profile">{t.navProfile}</NavItem>
                 <button onClick={handleLogoutClick} className="px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-secondary hover:opacity-90 transition-opacity">
-                  Logout
+                  {t.navLogout}
                 </button>
               </>
             ) : (
               <Link to="/login" className="px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-secondary hover:opacity-90 transition-opacity">
-                Login / Register
+                {t.navLogin}
               </Link>
             )}
             <div className="relative">
-                <select className="appearance-none bg-transparent border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-brand-primary focus:border-brand-primary block w-full p-2 pr-8">
-                    {languages.map(lang => <option key={lang}>{lang}</option>)}
+                <select 
+                  value={language}
+                  onChange={handleLangChange}
+                  className="appearance-none bg-transparent border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-brand-primary focus:border-brand-primary block w-full p-2 pr-8"
+                >
+                    {languages.map(lang => <option key={lang.code} value={lang.code}>{lang.name}</option>)}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
@@ -99,23 +125,27 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
       {isMenuOpen && (
         <div className="md:hidden" id="mobile-menu">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <NavItem to="/">Home</NavItem>
-            <NavItem to="/about">About Us</NavItem>
-            <NavItem to="/contact">Contact Us</NavItem>
-            <NavItem to="/faq">FAQ</NavItem>
-            {isLoggedIn && <NavItem to="/profile">Profile</NavItem>}
+            <NavItem to="/">{t.navHome}</NavItem>
+            <NavItem to="/about">{t.navAbout}</NavItem>
+            <NavItem to="/contact">{t.navContact}</NavItem>
+            <NavItem to="/faq">{t.navFAQ}</NavItem>
+            {isLoggedIn && <NavItem to="/profile">{t.navProfile}</NavItem>}
           </div>
           <div className="pt-4 pb-3 border-t border-gray-200">
             <div className="flex items-center px-5">
               {isLoggedIn ? (
-                 <button onClick={handleLogoutClick} className="w-full text-center px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-secondary hover:opacity-90">Logout</button>
+                 <button onClick={handleLogoutClick} className="w-full text-center px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-secondary hover:opacity-90">{t.navLogout}</button>
               ) : (
-                 <Link to="/login" className="w-full text-center px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-secondary hover:opacity-90">Login / Register</Link>
+                 <Link to="/login" className="w-full text-center px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-secondary hover:opacity-90">{t.navLogin}</Link>
               )}
             </div>
              <div className="mt-3 px-5">
-                <select className="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-brand-primary focus:border-brand-primary block w-full p-2">
-                    {languages.map(lang => <option key={lang}>{lang}</option>)}
+                <select 
+                  value={language}
+                  onChange={handleLangChange}
+                  className="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-brand-primary focus:border-brand-primary block w-full p-2"
+                >
+                    {languages.map(lang => <option key={lang.code} value={lang.code}>{lang.name}</option>)}
                 </select>
             </div>
           </div>

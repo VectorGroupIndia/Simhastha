@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 const ContactPage: React.FC = () => {
@@ -36,19 +35,19 @@ const ContactPage: React.FC = () => {
         <form onSubmit={handleDetailsSubmit} className="space-y-4">
             <div>
                 <label htmlFor="name" className="block text-sm font-medium text-slate-700">Full Name</label>
-                <input type="text" name="name" id="name" value={name} onChange={e => setName(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary" />
+                <input type="text" name="name" id="name" value={name} onChange={e => setName(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900" />
             </div>
             <div>
                 <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email Address</label>
-                <input type="email" name="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary" />
+                <input type="email" name="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900" />
             </div>
             <div>
                 <label htmlFor="mobile" className="block text-sm font-medium text-slate-700">Mobile Number</label>
-                <input type="tel" name="mobile" id="mobile" value={mobile} onChange={e => setMobile(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary" />
+                <input type="tel" name="mobile" id="mobile" value={mobile} onChange={e => setMobile(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900" />
             </div>
             <div>
                 <label htmlFor="message" className="block text-sm font-medium text-slate-700">Message</label>
-                <textarea id="message" name="message" rows={4} value={message} onChange={e => setMessage(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary"></textarea>
+                <textarea id="message" name="message" rows={4} value={message} onChange={e => setMessage(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900"></textarea>
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
             <div>
@@ -66,7 +65,7 @@ const ContactPage: React.FC = () => {
             </p>
             <div>
                 <label htmlFor="otp" className="block text-sm font-medium text-slate-700 sr-only">Enter OTP</label>
-                <input type="text" name="otp" id="otp" value={otp} onChange={e => setOtp(e.target.value)} required placeholder="Enter 6-digit OTP" className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-center" />
+                <input type="text" name="otp" id="otp" value={otp} onChange={e => setOtp(e.target.value)} required placeholder="Enter 6-digit OTP" className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-center text-slate-900" />
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
             <div>

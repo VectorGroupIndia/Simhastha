@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const allLanguages = [
   "English", "हिंदी", "বাংলা", "ગુજરાતી", "ಕನ್ನಡ", "മലയാളം", "मराठी", "ਪੰਜਾਬੀ", "தமிழ்", "తెలుగు", "اردو"
@@ -22,6 +23,11 @@ const HomePage: React.FC = () => {
             <p className="mt-2 text-2xl font-bold text-brand-secondary">
               Ujjain Simhastha Mahakumbh 2028
             </p>
+            <div className="mt-10 flex items-center justify-center gap-x-6">
+                <Link to="/report" className="rounded-md bg-brand-secondary px-8 py-3.5 text-lg font-semibold text-white shadow-sm hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-secondary">
+                  File a Lost or Found Report
+                </Link>
+            </div>
           </div>
         </div>
         

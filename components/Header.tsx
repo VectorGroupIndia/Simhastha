@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 
 const NavItem: React.FC<{ to: string; children: React.ReactNode }> = ({ to, children }) => {
   return (
@@ -22,8 +22,19 @@ const languages = [
   "English", "हिंदी", "বাংলা", "ગુજરાતી", "ಕನ್ನಡ", "മലയാളം", "मराठी", "ਪੰਜਾਬੀ", "தமிழ்", "తెలుగు", "اردو"
 ];
 
-const Header: React.FC = () => {
+interface HeaderProps {
+    isLoggedIn: boolean;
+    onLogout: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogoutClick = () => {
+    onLogout();
+    navigate('/');
+  };
 
   return (
     <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40">
@@ -41,9 +52,18 @@ const Header: React.FC = () => {
               <NavItem to="/contact">Contact Us</NavItem>
               <NavItem to="/faq">FAQ</NavItem>
             </div>
-            <Link to="/login" className="px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-secondary hover:opacity-90 transition-opacity">
-              Login / Register
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <NavItem to="/profile">Profile</NavItem>
+                <button onClick={handleLogoutClick} className="px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-secondary hover:opacity-90 transition-opacity">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link to="/login" className="px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-secondary hover:opacity-90 transition-opacity">
+                Login / Register
+              </Link>
+            )}
             <div className="relative">
                 <select className="appearance-none bg-transparent border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-brand-primary focus:border-brand-primary block w-full p-2 pr-8">
                     {languages.map(lang => <option key={lang}>{lang}</option>)}
@@ -83,10 +103,15 @@ const Header: React.FC = () => {
             <NavItem to="/about">About Us</NavItem>
             <NavItem to="/contact">Contact Us</NavItem>
             <NavItem to="/faq">FAQ</NavItem>
+            {isLoggedIn && <NavItem to="/profile">Profile</NavItem>}
           </div>
           <div className="pt-4 pb-3 border-t border-gray-200">
             <div className="flex items-center px-5">
-              <Link to="/login" className="w-full text-center px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-secondary hover:opacity-90">Login / Register</Link>
+              {isLoggedIn ? (
+                 <button onClick={handleLogoutClick} className="w-full text-center px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-secondary hover:opacity-90">Logout</button>
+              ) : (
+                 <Link to="/login" className="w-full text-center px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-secondary hover:opacity-90">Login / Register</Link>
+              )}
             </div>
              <div className="mt-3 px-5">
                 <select className="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-brand-primary focus:border-brand-primary block w-full p-2">

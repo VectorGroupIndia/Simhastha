@@ -1,11 +1,15 @@
-
-import React, { useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 
 type FormStep = 'credentials' | 'emailOtp' | 'mobileOtp' | 'success';
 
-const LoginPage: React.FC = () => {
+interface LoginPageProps {
+    onLoginSuccess: () => void;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isRegister = location.pathname.includes('register');
   
   const [step, setStep] = useState<FormStep>('credentials');
@@ -15,6 +19,16 @@ const LoginPage: React.FC = () => {
   const [emailOtp, setEmailOtp] = useState('');
   const [mobileOtp, setMobileOtp] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (step === 'success') {
+      onLoginSuccess();
+      const timer = setTimeout(() => {
+        navigate('/profile');
+      }, 2000); // Redirect after 2 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [step, onLoginSuccess, navigate]);
 
   const handleCredentialSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +90,7 @@ const LoginPage: React.FC = () => {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2"
+            className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2"
           />
         </div>
       </div>
@@ -95,7 +109,7 @@ const LoginPage: React.FC = () => {
               required
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2"
+              className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2"
             />
           </div>
         </div>
@@ -123,7 +137,7 @@ const LoginPage: React.FC = () => {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2"
+            className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2"
           />
         </div>
       </div>
@@ -165,7 +179,7 @@ const LoginPage: React.FC = () => {
             required
             value={otpValue}
             onChange={(e) => setOtpValue(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2 text-center"
+            className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2 text-center"
             placeholder="Enter 6-digit OTP"
           />
         </div>
@@ -197,9 +211,9 @@ const LoginPage: React.FC = () => {
       <h2 className="text-2xl font-bold text-gray-900">
         {isRegister ? 'Registration Successful!' : 'Login Successful!'}
       </h2>
-      <p className="text-gray-600">You will be redirected to your dashboard shortly.</p>
-       <Link to="/" className="inline-block mt-4 rounded-md bg-brand-secondary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90">
-            Go to Home
+      <p className="text-gray-600">You will be redirected to your profile dashboard shortly.</p>
+       <Link to="/profile" className="inline-block mt-4 rounded-md bg-brand-secondary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90">
+            Go to Profile
         </Link>
     </div>
   );

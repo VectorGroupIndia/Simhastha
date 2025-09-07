@@ -59,6 +59,7 @@ const ReportFormStep: React.FC<ReportFormStepProps> = ({ onSubmit, initialData }
     const [analysisError, setAnalysisError] = useState('');
     const [analysisSuccess, setAnalysisSuccess] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0]);
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     useEffect(() => {
         if (formData.category && categories[formData.category as keyof typeof categories]) {
@@ -89,6 +90,13 @@ const ReportFormStep: React.FC<ReportFormStepProps> = ({ onSubmit, initialData }
         setAnalysisSuccess(false);
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        if (errors[name]) {
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors[name];
+                return newErrors;
+            });
+        }
     };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,13 +145,29 @@ const ReportFormStep: React.FC<ReportFormStepProps> = ({ onSubmit, initialData }
         }
     };
     
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onSubmit(formData);
+    const validateForm = () => {
+        const newErrors: Record<string, string> = {};
+        if (!formData.category) newErrors.category = 'Category is required.';
+        if (!formData.subcategory) newErrors.subcategory = 'Subcategory is required.';
+        if (!formData.itemName.trim()) newErrors.itemName = 'Item name is required.';
+        if (!formData.description.trim()) newErrors.description = 'Description is required.';
+        if (!formData.city.trim()) newErrors.city = 'City is required.';
+        if (!formData.location.trim()) newErrors.location = 'Location is required.';
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (validateForm()) {
+            onSubmit(formData);
+        }
+    };
+
+    const getInputClassName = (field: string, isSelect = false) => `mt-1 block w-full px-3 py-2 bg-white border rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900 ${isSelect ? '' : ''} ${errors[field] ? 'border-red-500' : 'border-slate-300'}`;
+
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             {/* Report Type Tabs */}
             <div className="flex border-b border-gray-200">
                 <button type="button" onClick={() => setFormData(p => ({...p, reportType: 'lost'}))} className={`flex-1 py-3 text-center font-semibold transition-colors duration-200 ${formData.reportType === 'lost' ? 'text-brand-primary border-b-2 border-brand-primary' : 'text-slate-500 hover:text-slate-700'}`}>
@@ -219,44 +243,50 @@ const ReportFormStep: React.FC<ReportFormStepProps> = ({ onSubmit, initialData }
                     {/* Category & Subcategory */}
                     <div>
                         <label htmlFor="category" className="block text-sm font-medium text-slate-700">Category</label>
-                        <select id="category" name="category" value={formData.category} onChange={handleChange} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900">
+                        <select id="category" name="category" value={formData.category} onChange={handleChange} className={getInputClassName('category', true)}>
                             <option value="">Select a category</option>
                             {Object.keys(categories).map(cat => <option key={cat} value={cat}>{cat}</option>)}
                         </select>
+                        {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category}</p>}
                     </div>
                     <div>
                         <label htmlFor="subcategory" className="block text-sm font-medium text-slate-700">Subcategory</label>
-                        <select id="subcategory" name="subcategory" value={formData.subcategory} onChange={handleChange} required disabled={!formData.category} className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary disabled:bg-slate-50 text-slate-900">
+                        <select id="subcategory" name="subcategory" value={formData.subcategory} onChange={handleChange} disabled={!formData.category} className={getInputClassName('subcategory', true) + " disabled:bg-slate-50"}>
                             <option value="">Select a subcategory</option>
                             {subcategories.map(sub => <option key={sub} value={sub}>{sub}</option>)}
                         </select>
+                        {errors.subcategory && <p className="mt-1 text-sm text-red-600">{errors.subcategory}</p>}
                     </div>
                 </div>
 
                 {/* Item Name */}
                 <div>
                     <label htmlFor="itemName" className="block text-sm font-medium text-slate-700">Item Name / Title</label>
-                    <input type="text" id="itemName" name="itemName" value={formData.itemName} onChange={handleChange} required placeholder="e.g., Black Samsung Smartphone" className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900"/>
+                    <input type="text" id="itemName" name="itemName" value={formData.itemName} onChange={handleChange} placeholder="e.g., Black Samsung Smartphone" className={getInputClassName('itemName')}/>
+                    {errors.itemName && <p className="mt-1 text-sm text-red-600">{errors.itemName}</p>}
                 </div>
 
                 {/* Description */}
                 <div>
                      <label htmlFor="description" className="block text-sm font-medium text-slate-700">Description</label>
-                    <textarea id="description" name="description" rows={4} value={formData.description} onChange={handleChange} required placeholder="Provide as many details as possible: color, brand, model, any identifying marks, etc." className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900"></textarea>
+                    <textarea id="description" name="description" rows={4} value={formData.description} onChange={handleChange} placeholder="Provide as many details as possible: color, brand, model, any identifying marks, etc." className={getInputClassName('description')}></textarea>
+                    {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
                 </div>
                 
                  {/* City */}
                  <div>
                      <label htmlFor="city" className="block text-sm font-medium text-slate-700">City</label>
-                    <select id="city" name="city" value={formData.city} onChange={handleChange} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900">
+                    <select id="city" name="city" value={formData.city} onChange={handleChange} className={getInputClassName('city', true)}>
                         {cities.map(city => <option key={city} value={city}>{city}</option>)}
                     </select>
+                    {errors.city && <p className="mt-1 text-sm text-red-600">{errors.city}</p>}
                 </div>
 
                  {/* Location */}
                 <div>
                     <label htmlFor="location" className="block text-sm font-medium text-slate-700">{formData.reportType === 'lost' ? 'Last Seen Location' : 'Found Location'}</label>
-                    <input type="text" id="location" name="location" value={formData.location} onChange={handleChange} required placeholder="e.g., Near Ram Ghat, Ujjain" className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900"/>
+                    <input type="text" id="location" name="location" value={formData.location} onChange={handleChange} placeholder="e.g., Near Ram Ghat, Ujjain" className={getInputClassName('location')}/>
+                    {errors.location && <p className="mt-1 text-sm text-red-600">{errors.location}</p>}
                 </div>
 
                 {/* Serial Number */}

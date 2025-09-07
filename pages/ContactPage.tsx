@@ -7,49 +7,70 @@ const ContactPage: React.FC = () => {
     const [mobile, setMobile] = useState('');
     const [message, setMessage] = useState('');
     const [otp, setOtp] = useState('');
-    const [error, setError] = useState('');
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const validateForm = () => {
+        const newErrors: Record<string, string> = {};
+        if (!name.trim()) newErrors.name = 'Full name is required.';
+        if (!email.trim()) {
+            newErrors.email = 'Email address is required.';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            newErrors.email = 'Please enter a valid email address.';
+        }
+        if (!mobile.trim()) {
+            newErrors.mobile = 'Mobile number is required.';
+        } else if (!/^[6-9]\d{9}$/.test(mobile)) {
+            newErrors.mobile = 'Please enter a valid 10-digit mobile number.';
+        }
+        if (!message.trim()) newErrors.message = 'Message is required.';
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleDetailsSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setError('');
-        if (name && email && mobile && message) {
+        if (validateForm()) {
             console.log('Simulating sending OTP...');
             setFormStep('otp');
-        } else {
-            setError('Please fill in all fields.');
         }
     };
 
     const handleOtpSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setError('');
+        setErrors({});
         if (otp === '123456') {
             console.log('OTP verification successful!');
             setFormStep('success');
         } else {
-            setError('Invalid OTP. Please use the demo OTP: 123456');
+            setErrors({ otp: 'Invalid OTP. Please use the demo OTP: 123456' });
         }
     };
+    
+    const getInputClassName = (field: string) => `mt-1 block w-full px-3 py-2 bg-white border rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900 ${errors[field] ? 'border-red-500' : 'border-slate-300'}`;
 
     const renderDetailsForm = () => (
         <form onSubmit={handleDetailsSubmit} className="space-y-4">
             <div>
                 <label htmlFor="name" className="block text-sm font-medium text-slate-700">Full Name</label>
-                <input type="text" name="name" id="name" value={name} onChange={e => setName(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900" />
+                <input type="text" name="name" id="name" value={name} onChange={e => setName(e.target.value)} className={getInputClassName('name')} />
+                {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
             </div>
             <div>
                 <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email Address</label>
-                <input type="email" name="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900" />
+                <input type="email" name="email" id="email" value={email} onChange={e => setEmail(e.target.value)} className={getInputClassName('email')} />
+                {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
             </div>
             <div>
                 <label htmlFor="mobile" className="block text-sm font-medium text-slate-700">Mobile Number</label>
-                <input type="tel" name="mobile" id="mobile" value={mobile} onChange={e => setMobile(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900" />
+                <input type="tel" name="mobile" id="mobile" value={mobile} onChange={e => setMobile(e.target.value)} className={getInputClassName('mobile')} />
+                {errors.mobile && <p className="mt-1 text-sm text-red-600">{errors.mobile}</p>}
             </div>
             <div>
                 <label htmlFor="message" className="block text-sm font-medium text-slate-700">Message</label>
-                <textarea id="message" name="message" rows={4} value={message} onChange={e => setMessage(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-slate-900"></textarea>
+                <textarea id="message" name="message" rows={4} value={message} onChange={e => setMessage(e.target.value)} className={getInputClassName('message')}></textarea>
+                {errors.message && <p className="mt-1 text-sm text-red-600">{errors.message}</p>}
             </div>
-            {error && <p className="text-sm text-red-600">{error}</p>}
             <div>
                 <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">Send Message</button>
             </div>
@@ -65,9 +86,9 @@ const ContactPage: React.FC = () => {
             </p>
             <div>
                 <label htmlFor="otp" className="block text-sm font-medium text-slate-700 sr-only">Enter OTP</label>
-                <input type="text" name="otp" id="otp" value={otp} onChange={e => setOtp(e.target.value)} required placeholder="Enter 6-digit OTP" className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary text-center text-slate-900" />
+                <input type="text" name="otp" id="otp" value={otp} onChange={e => setOtp(e.target.value)} placeholder="Enter 6-digit OTP" className={getInputClassName('otp') + ' text-center'} />
+                {errors.otp && <p className="mt-1 text-sm text-red-600">{errors.otp}</p>}
             </div>
-            {error && <p className="text-sm text-red-600">{error}</p>}
             <div>
                 <button type="submit" className="w-full bg-brand-secondary text-white font-semibold py-2 px-4 rounded-md hover:opacity-90 transition-opacity">Verify & Submit</button>
             </div>

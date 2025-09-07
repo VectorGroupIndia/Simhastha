@@ -15,10 +15,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [step, setStep] = useState<FormStep>('credentials');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [mobile, setMobile] = useState('');
   const [emailOtp, setEmailOtp] = useState('');
   const [mobileOtp, setMobileOtp] = useState('');
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (step === 'success') {
@@ -32,21 +33,40 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
   const handleCredentialSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setErrors({});
     
-    if (!isRegister && (email !== 'user@demo.com' || password !== 'password123')) {
-      setError('Invalid demo credentials. Use user@demo.com and password123.');
-      return;
-    }
-    
-    if (isRegister && (!email || !password || !mobile)) {
-        setError('Please fill in all fields.');
+    // Login validation
+    if (!isRegister) {
+      if (email !== 'user@demo.com' || password !== 'password123') {
+        setErrors({ form: 'Invalid demo credentials. Use user@demo.com and password123.' });
         return;
-    }
-
-    if (!isRegister && (!email || !password)) {
-        setError('Please fill in all fields.');
+      }
+    } else {
+      // Registration validation
+      const newErrors: Record<string, string> = {};
+      if (!email.trim()) {
+        newErrors.email = 'Email address is required.';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        newErrors.email = 'Please enter a valid email address.';
+      }
+      if (!mobile.trim()) {
+        newErrors.mobile = 'Mobile number is required.';
+      } else if (!/^[6-9]\d{9}$/.test(mobile)) {
+        newErrors.mobile = 'Please enter a valid 10-digit mobile number.';
+      }
+      if (!password) {
+        newErrors.password = 'Password is required.';
+      } else if (password.length < 8) {
+        newErrors.password = 'Password must be at least 8 characters long.';
+      }
+      if (password !== confirmPassword) {
+        newErrors.confirmPassword = 'Passwords do not match.';
+      }
+      
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
         return;
+      }
     }
     
     console.log('Credentials submitted. Proceeding to email OTP verification...');
@@ -55,43 +75,37 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   
   const handleEmailOtpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setErrors({});
     if (emailOtp === '123456') {
       console.log('Email OTP verification successful! Proceeding to mobile OTP verification...');
       setStep('mobileOtp');
     } else {
-      setError('Invalid Email OTP. Please use the demo OTP: 123456');
+      setErrors({ otp: 'Invalid Email OTP. Please use the demo OTP: 123456' });
     }
   };
 
   const handleMobileOtpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setErrors({});
     if (mobileOtp === '654321') {
       console.log('Mobile OTP verification successful!');
       setStep('success');
     } else {
-      setError('Invalid Mobile OTP. Please use the demo OTP: 654321');
+      setErrors({ otp: 'Invalid Mobile OTP. Please use the demo OTP: 654321' });
     }
   };
   
+  const getInputClassName = (field: string) => `block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2 ${errors[field] ? 'ring-red-500' : 'ring-gray-300'}`;
+
   const renderCredentialForm = () => (
-    <form className="space-y-6" onSubmit={handleCredentialSubmit}>
+    <form className="space-y-6" onSubmit={handleCredentialSubmit} noValidate>
       <div>
         <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
           Email address
         </label>
         <div className="mt-2">
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2"
-          />
+          <input id="email" name="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={getInputClassName('email')}/>
+          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
         </div>
       </div>
 
@@ -101,16 +115,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             Mobile Number
           </label>
           <div className="mt-2">
-            <input
-              id="mobile"
-              name="mobile"
-              type="tel"
-              autoComplete="tel"
-              required
-              value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
-              className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2"
-            />
+            <input id="mobile" name="mobile" type="tel" autoComplete="tel" required value={mobile} onChange={(e) => setMobile(e.target.value)} className={getInputClassName('mobile')}/>
+            {errors.mobile && <p className="mt-1 text-sm text-red-600">{errors.mobile}</p>}
           </div>
         </div>
       )}
@@ -129,20 +135,25 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           )}
         </div>
         <div className="mt-2">
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete={isRegister ? "new-password" : "current-password"}
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2"
-          />
+          <input id="password" name="password" type="password" autoComplete={isRegister ? "new-password" : "current-password"} required value={password} onChange={(e) => setPassword(e.target.value)} className={getInputClassName('password')}/>
+          {isRegister && <p className="mt-1 text-xs text-slate-500">Must be at least 8 characters long.</p>}
+          {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
         </div>
       </div>
       
-      {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+      {isRegister && (
+        <div>
+          <label htmlFor="confirmPassword" className="block text-sm font-medium leading-6 text-gray-900">
+            Confirm Password
+          </label>
+          <div className="mt-2">
+            <input id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password" required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className={getInputClassName('confirmPassword')}/>
+            {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
+          </div>
+        </div>
+      )}
+      
+      {errors.form && <p className="text-sm text-red-600 text-center">{errors.form}</p>}
       
       <div>
         <button
@@ -172,20 +183,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           {title}
         </label>
         <div className="mt-2">
-          <input
-            id={id}
-            name={id}
-            type="text"
-            required
-            value={otpValue}
-            onChange={(e) => setOtpValue(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-primary sm:text-sm sm:leading-6 p-2 text-center"
-            placeholder="Enter 6-digit OTP"
-          />
+          <input id={id} name={id} type="text" required value={otpValue} onChange={(e) => setOtpValue(e.target.value)} className={getInputClassName('otp') + " text-center"} placeholder="Enter 6-digit OTP"/>
         </div>
       </div>
       
-      {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+      {errors.otp && <p className="text-sm text-red-600 text-center">{errors.otp}</p>}
 
       <div>
         <button
@@ -196,7 +198,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         </button>
       </div>
        <div className="text-center text-sm">
-            <button type="button" onClick={() => { setStep('credentials'); setError(''); }} className="font-semibold text-brand-primary hover:text-brand-primary/80">
+            <button type="button" onClick={() => { setStep('credentials'); setErrors({}); }} className="font-semibold text-brand-primary hover:text-brand-primary/80">
                 Go Back
             </button>
         </div>

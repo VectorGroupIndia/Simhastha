@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const WhatsAppIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -25,21 +24,37 @@ interface LanguageSelectorPopupProps {
 
 const LanguageSelectorPopup: React.FC<LanguageSelectorPopupProps> = ({ onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-2xl max-w-lg w-full transform transition-all duration-300 scale-95 hover:scale-100">
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/80 backdrop-blur-lg rounded-xl shadow-2xl max-w-md w-full transform transition-all duration-300 scale-95 hover:scale-100 border border-white/20">
         <div className="p-6 md:p-8 text-center">
-          <h2 className="text-2xl font-bold text-brand-dark mb-2">Welcome to Foundtastic!</h2>
-          <p className="text-slate-600 mb-6">How would you like to connect with us?</p>
+          <h2 className="text-2xl font-bold text-brand-dark mb-2">
+            Welcome to Foundtastic!
+            <br />
+            <span className="text-xl font-normal">फाउंडटास्टिक में आपका स्वागत है!</span>
+          </h2>
+          <p className="text-slate-600 mb-6 font-semibold">continue with / जारी रखें</p>
           
-          <div className="space-y-4 mb-6">
-            <a href="https://wa.me/+917276199099" target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-500 hover:bg-green-600 transition-colors">
-              <WhatsAppIcon className="mr-3" /> Continue with WhatsApp
+          <div className="space-y-4">
+            <a href="https://wa.me/+917276199099" target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-md text-white bg-green-500 hover:bg-green-600 transition-colors">
+              <WhatsAppIcon className="mr-3 flex-shrink-0" />
+              <div className="leading-tight text-left">
+                <p className="font-medium text-base">Continue with WhatsApp</p>
+                <p className="text-xs">व्हाट्सएप के साथ जारी रखें</p>
+              </div>
             </a>
-            <button disabled className="w-full flex items-center justify-center px-4 py-3 border border-slate-300 text-base font-medium rounded-md text-slate-700 bg-slate-100 cursor-not-allowed opacity-60">
-              <SmsIcon className="mr-3" /> Continue with SMS (Coming Soon)
+            <button disabled className="w-full flex items-center justify-center px-4 py-3 border border-slate-300 rounded-md text-slate-700 bg-slate-100 cursor-not-allowed opacity-60">
+              <SmsIcon className="mr-3 flex-shrink-0" />
+              <div className="leading-tight text-left">
+                <p className="font-medium text-base">Continue with SMS <span className="text-xs">(Coming Soon)</span></p>
+                <p className="text-xs">एसएमएस के साथ जारी रखें <span className="text-xs">(जल्द आ रहा है)</span></p>
+              </div>
             </button>
-            <button disabled className="w-full flex items-center justify-center px-4 py-3 border border-slate-300 text-base font-medium rounded-md text-slate-700 bg-slate-100 cursor-not-allowed opacity-60">
-              <PhoneIcon className="mr-3" /> Continue with Call (Coming Soon)
+            <button disabled className="w-full flex items-center justify-center px-4 py-3 border border-slate-300 rounded-md text-slate-700 bg-slate-100 cursor-not-allowed opacity-60">
+              <PhoneIcon className="mr-3 flex-shrink-0" />
+               <div className="leading-tight text-left">
+                <p className="font-medium text-base">Continue with Call <span className="text-xs">(Coming Soon)</span></p>
+                <p className="text-xs">कॉल के साथ जारी रखें <span className="text-xs">(जल्द आ रहा है)</span></p>
+              </div>
             </button>
           </div>
           
@@ -48,19 +63,16 @@ const LanguageSelectorPopup: React.FC<LanguageSelectorPopupProps> = ({ onClose }
                   <div className="w-full border-t border-gray-300"></div>
               </div>
               <div className="relative flex justify-center">
-                  <span className="px-2 bg-white text-sm text-gray-500">OR</span>
+                  <span className="px-2 bg-white/0 text-sm text-gray-500">OR</span>
               </div>
           </div>
 
-          <p className="text-slate-600 mb-4">Continue with the application in your preferred language:</p>
-          <div className="flex justify-center space-x-4">
-            <button onClick={onClose} className="px-6 py-2 border border-brand-primary text-brand-primary font-semibold rounded-md hover:bg-blue-50 transition-colors">
-              English
-            </button>
-            <button onClick={onClose} className="px-6 py-2 border border-brand-secondary text-brand-secondary font-semibold rounded-md hover:bg-orange-50 transition-colors">
-              हिंदी
-            </button>
-          </div>
+          <button onClick={onClose} className="w-full px-6 py-3 border border-brand-primary text-brand-primary rounded-md hover:bg-brand-primary hover:text-white transition-colors">
+              <div className="leading-tight">
+                <p className="font-bold text-base">Continue with the application</p>
+                <p className="text-sm font-normal">ऐप्लिकेशन के साथ जारी रखें</p>
+              </div>
+          </button>
         </div>
       </div>
     </div>

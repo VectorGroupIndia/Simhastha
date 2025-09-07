@@ -1,8 +1,7 @@
-
 import React from 'react';
 
-const indianLanguages = [
-  "বাংলা", "ગુજરાતી", "ಕನ್ನಡ", "മലയാളം", "मराठी", "ਪੰਜਾਬੀ", "தமிழ்", "తెలుగు", "اردو"
+const allLanguages = [
+  "English", "हिंदी", "বাংলা", "ગુજરાતી", "ಕನ್ನಡ", "മലയാളം", "मराठी", "ਪੰਜਾਬੀ", "தமிழ்", "తెలుగు", "اردو"
 ];
 
 const HomePage: React.FC = () => {
@@ -23,27 +22,17 @@ const HomePage: React.FC = () => {
             <p className="mt-2 text-2xl font-bold text-brand-secondary">
               Ujjain Simhastha Mahakumbh 2028
             </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <a href="#/register" className="rounded-md bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary">
-                Report an Item
-              </a>
-              <a href="#/about" className="text-sm font-semibold leading-6 text-slate-900">
-                Learn more <span aria-hidden="true">→</span>
-              </a>
-            </div>
           </div>
         </div>
         
         <div className="text-center pb-20">
           <h2 className="text-xl font-semibold text-brand-dark mb-2">Choose your language</h2>
-          <p className="text-slate-500 mb-6">अपनी भाषा चुनें</p>
-          <div className="flex justify-center space-x-6 mb-8">
-            <button className="px-8 py-3 bg-white border-2 border-brand-primary text-brand-primary font-bold rounded-lg shadow-md hover:bg-blue-50 transition-all duration-300">English</button>
-            <button className="px-8 py-3 bg-white border-2 border-brand-secondary text-brand-secondary font-bold rounded-lg shadow-md hover:bg-orange-50 transition-all duration-300">हिंदी</button>
-          </div>
-          <div className="max-w-3xl mx-auto flex flex-wrap justify-center gap-x-6 gap-y-3">
-            {indianLanguages.map(lang => (
-              <a key={lang} href="#" className="text-slate-600 hover:text-brand-primary transition-colors">{lang}</a>
+          <p className="text-slate-500 mb-8">अपनी भाषा चुनें</p>
+          <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-3 sm:gap-4 px-4">
+            {allLanguages.map(lang => (
+              <a key={lang} href="#" className="px-4 py-2 sm:px-5 sm:py-2.5 bg-white border border-slate-300 text-slate-700 font-medium rounded-lg shadow-sm hover:bg-brand-light hover:border-brand-primary hover:text-brand-primary transition-all duration-300 transform hover:-translate-y-1 text-sm sm:text-base">
+                {lang}
+              </a>
             ))}
           </div>
         </div>

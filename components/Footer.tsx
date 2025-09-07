@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const FacebookIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -33,20 +32,21 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-brand-dark text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-          <div className="text-center md:text-left text-sm text-slate-300">
-            <p>foundtastic by Transfigure Technologies Pvt Ltd.</p>
-            <p>Copyright © {new Date().getFullYear()}</p>
+        <div className="flex flex-col items-center text-center space-y-6">
+          
+          <div>
+            <p className="text-sm text-slate-300">foundtastic by Transfigure Technologies Pvt Ltd.</p>
+            <p className="text-lg font-semibold text-brand-secondary mt-1">Ujjain Simhastha Mahakumbh 2028</p>
+            <p className="text-xs text-slate-400 mt-2">Copyright © {new Date().getFullYear()}</p>
           </div>
-          <div className="text-center text-lg font-semibold text-brand-secondary">
-            Ujjain Simhastha Mahakumbh 2028
+          
+          <div className="flex items-center space-x-6">
+            <a href="#" className="text-slate-300 hover:text-white transition-colors"><FacebookIcon className="w-5 h-5"/></a>
+            <a href="#" className="text-slate-300 hover:text-white transition-colors"><LinkedInIcon className="w-5 h-5"/></a>
+            <a href="#" className="text-slate-300 hover:text-white transition-colors"><TwitterIcon className="w-5 h-5"/></a>
+            <a href="#" className="text-slate-300 hover:text-white transition-colors"><InstagramIcon className="w-5 h-5"/></a>
           </div>
-          <div className="flex items-center space-x-4">
-            <a href="#" className="text-slate-300 hover:text-white transition-colors"><FacebookIcon /></a>
-            <a href="#" className="text-slate-300 hover:text-white transition-colors"><LinkedInIcon /></a>
-            <a href="#" className="text-slate-300 hover:text-white transition-colors"><TwitterIcon /></a>
-            <a href="#" className="text-slate-300 hover:text-white transition-colors"><InstagramIcon /></a>
-          </div>
+
         </div>
       </div>
     </footer>

@@ -56,7 +56,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
             <Route path="/register" element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
             <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/report" element={<ReportFlowPage />} />
+            <Route path="/report" element={<ReportFlowPage isLoggedIn={isLoggedIn} />} />
           </Routes>
         </main>
         <Footer />

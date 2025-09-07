@@ -21,8 +21,12 @@ export interface ReportData {
 
 type ReportStep = 'auth' | 'instructions' | 'form' | 'confirm' | 'success';
 
-const ReportFlowPage: React.FC = () => {
-    const [step, setStep] = useState<ReportStep>('auth');
+interface ReportFlowPageProps {
+    isLoggedIn: boolean;
+}
+
+const ReportFlowPage: React.FC<ReportFlowPageProps> = ({ isLoggedIn }) => {
+    const [step, setStep] = useState<ReportStep>(isLoggedIn ? 'instructions' : 'auth');
     const [formData, setFormData] = useState<Partial<ReportData>>({});
 
     const handleAuthSuccess = () => setStep('instructions');
